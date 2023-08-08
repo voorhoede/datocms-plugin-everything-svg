@@ -1,0 +1,8 @@
+.heading {
+  margin: 0;
+  margin-bottom: var(--spacing-l);
+}
+
+.switch {
+  margin-bottom: var(--spacing-l);
+}

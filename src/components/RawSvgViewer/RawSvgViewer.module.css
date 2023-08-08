@@ -1,0 +1,65 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-m);
+  margin-bottom: var(--spacing-l);
+}
+
+.title {
+  margin: 0;
+}
+
+.input {
+  border-color: transparent;
+  box-shadow: 0 0 0 5px #fff, 0 0 0 8px var(--semi-transparent-accent-color);
+}
+
+.editing .input {
+  transform: translateX(var(--spacing-s));
+}
+
+.buttonList {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-s);
+  transition: transform 0.2s ease-in-out;
+}
+
+.editing .buttonList {
+  transform: translateY(var(--spacing-m));
+}
+
+.editingText {
+  color: var(--light-body-color);
+}
+
+.button {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--accent-color);
+}
+
+.button:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.deleteButton {
+  color: var(--alert-color);
+}
+
+.svgLogo {
+  line-height: 0;
+}
+
+.svgLogo svg {
+  width: 5rem;
+  height: 5rem;
+}
+
+.rawCode {
+  white-space: pre-wrap;
+}
+
+

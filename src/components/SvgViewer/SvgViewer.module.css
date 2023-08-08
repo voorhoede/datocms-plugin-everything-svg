@@ -1,0 +1,95 @@
+.root {
+  display: flex;
+  flex-basis: 75%;
+  gap: var(--spacing-s);
+}
+
+.svgInput {
+  flex: 75%;
+}
+
+.textarea,
+.viewer {
+  padding: 0;
+  box-shadow: 0 0 0 1px var(--border-color);
+  border-radius: var(--spacing-s);
+  transition: box-shadow 0.1s ease-in-out;
+  box-sizing: border-box;
+}
+
+.textarea {
+  border: none;
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-m);
+  resize: none;
+}
+
+.textarea:focus {
+  box-shadow: 0 0 0 1px var(--light-body-color);
+}
+
+.viewer {
+  flex: 25%;
+  box-shadow: 0 0 0 1px var(--border-color);
+  border-radius: var(--spacing-s);
+}
+
+.viewerSvg {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  padding: var(--spacing-l);
+  background-color: var(--lighter-bg-color);
+}
+
+.viewerSvgElement {
+  line-height: 0;
+}
+
+.viewerSvg svg {
+  width: 100%;
+  height: 100%;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAKElEQVQoU2O8du3afwY0oKmpiS7EwDgUFP7//x/DM9evX8f0zBBQCACKKzR8WkcGUAAAAABJRU5ErkJggg==)
+    left center;
+}
+
+.filename {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0 var(--spacing-l);
+}
+
+.viewerText {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  text-align: center;
+  margin: 0;
+}
+
+.text span {
+  margin: 0;
+  display: block;
+}
+
+.viewerFilename {
+  height: 30px;
+  width: 100%;
+}
+
+.filenameInput {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  text-align: center;
+}

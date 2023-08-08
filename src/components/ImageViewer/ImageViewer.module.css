@@ -1,0 +1,172 @@
+.root {
+  position: relative;
+  border: none;
+  padding: 0;
+  background: transparent;
+  box-shadow: 0 0 0 1px var(--border-color);
+  border-radius: var(--spacing-s);
+  width: 100%;
+  height: 100%;
+  max-width: 175px;
+  transition: box-shadow 0.1s ease-in-out;
+
+  --svg-size: 120px;
+}
+
+.medium {
+  max-width: 100px;
+  --svg-size: 80px;
+}
+
+.small {
+  max-width: 60px;
+  --svg-size: 40px;
+}
+
+.border:hover {
+  box-shadow: 0 0 0 1px var(--light-body-color);
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.selected,
+.selected:hover {
+  box-shadow: 0 0 0 3px var(--primary-color);
+}
+
+.image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--lighter-bg-color);
+  border-radius: var(--spacing-s);
+  aspect-ratio: 1 / 1;
+}
+
+.imageWithFilename {
+  border-radius: var(--spacing-s) var(--spacing-s) 0 0;
+}
+
+.image img,
+.image svg {
+  width: var(--svg-size);
+  height: var(--svg-size);
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAKElEQVQoU2O8du3afwY0oKmpiS7EwDgUFP7//x/DM9evX8f0zBBQCACKKzR8WkcGUAAAAABJRU5ErkJggg==)
+    left center;
+}
+
+.raw {
+  line-height: 0;
+}
+
+.caption {
+  padding: var(--spacing-s);
+  background-color: #fff;
+  text-align: center;
+  position: relative;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 0 var(--spacing-s) var(--spacing-s);
+}
+
+.dropdown {
+  position: absolute;
+  right: var(--spacing-s);
+  top: var(--spacing-s);
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.2s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.root:hover .dropdown {
+  opacity: 1;
+}
+
+.dropdownButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  padding: var(--spacing-s);
+  cursor: pointer;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.7);
+  opacity: 0.6;
+  transition: opacity 0.2s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.dropdownButton svg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.dropdownButton:hover {
+  opacity: 1;
+}
+
+.dropdownDeleteButton {
+  background: var(--alert-color);
+}
+
+.dropdownMenu {
+  position: absolute;
+  right: var(--spacing-s);
+  top: var(--spacing-xl);
+  padding: var(--spacing-m) 0;
+  min-width: 190px;
+  background-color: #fff;
+  box-shadow: 0 3px 10px #0003;
+  border-radius: var(--spacing-s);
+  margin-top: var(--spacing-s);
+}
+
+.dropdownMenuButton,
+.dropdownMenuDeleteButton {
+  padding: var(--spacing-s) var(--spacing-m);
+  width: 100%;
+  text-align: left;
+  color: var(--base-body-color);
+  background-color: transparent;
+  border: none;
+}
+
+.dropdownMenuButton:hover {
+  background-color: var(--light-bg-color);
+}
+
+.dropdownMenuDeleteButton {
+  color: var(--alert-color);
+}
+
+.dropdownMenuDeleteButton:hover {
+  background-color: var(--alert-color);
+  color: #fff;
+}
+
+.tag {
+  position: absolute;
+  top: var(--spacing-s);
+  left: var(--spacing-s);
+  background-color: var(--primary-color);
+  padding: var(--spacing-s) var(--spacing-s);
+  border-radius: var(--spacing-s);
+}
+
+.tagText {
+  margin: 0;
+  color: #fff;
+  font-weight: 700;
+}
+
+.filename {
+  display: inline-block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

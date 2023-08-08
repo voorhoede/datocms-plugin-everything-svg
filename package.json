@@ -1,0 +1,107 @@
+{
+  "name": "datocms-plugin-everything-svg",
+  "homepage": "https://github.com/voorhoede/datocms-plugin-everything-svg.git",
+  "version": "1.0.0",
+  "description": "A DatoCMS plugin that lets you upload SVGs to your DatoCMS project and select the raw <SVG /> it in your models",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "cross-env BROWSER='none' PUBLIC_URL='/' webpack-dev-server --mode=development",
+    "build": "cross-env PUBLIC_URL='.' webpack --mode=production",
+    "prettier": "prettier --write .",
+    "pre-commit": "npm run prettier",
+    "prepack": "npm run build",
+    "prepare": "husky install",
+    "postversion": "git push --follow-tags"
+  },
+  "dependencies": {
+    "@datocms/cma-client-browser": "^2.0.0",
+    "@types/lodash": "^4.14.195",
+    "@types/node": "^20.3.3",
+    "@types/react": "^18.2.14",
+    "@types/react-dom": "^18.2.6",
+    "@types/uuid": "^9.0.2",
+    "classnames": "^2.3.2",
+    "datocms-plugin-sdk": "^0.7.14",
+    "datocms-react-ui": "^0.7.14",
+    "is-svg": "^5.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.1.6",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.22.6",
+    "@babel/preset-env": "^7.22.6",
+    "@babel/preset-react": "^7.22.5",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.8.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "html-webpack-plugin": "^5.5.3",
+    "husky": "^8.0.3",
+    "mini-css-extract-plugin": "^2.7.6",
+    "prettier": "2.8.8",
+    "ts-loader": "^9.4.4",
+    "webpack": "^5.88.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "files": [
+    "build",
+    "docs"
+  ],
+  "keywords": [
+    "datocms",
+    "datocms-plugin",
+    "text-field",
+    "string-field",
+    "everything-svg",
+    "svg",
+    "raw-svg",
+    "upload-svg",
+    "svg-selector",
+    "select"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/voorhoede/datocms-plugin-everything-svg.git"
+  },
+  "author": "Voorhoede",
+  "license": "ISC",
+  "datoCmsPlugin": {
+    "title": "Everything SVG",
+    "previewImage": "docs/preview.mp4",
+    "coverImage": "docs/cover.png",
+    "entryPoint": "build/index.html"
+  },
+  "eslintConfig": {
+    "plugins": [
+      "prettier"
+    ],
+    "extends": [
+      "react-app",
+      "prettier"
+    ],
+    "rules": {
+      "no-console": 1,
+      "prettier/prettier": 1
+    }
+  },
+  "presets": [
+    "@babel/preset-env",
+    "@babel/preset-react"
+  ],
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

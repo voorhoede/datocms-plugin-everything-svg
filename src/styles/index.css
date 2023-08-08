@@ -1,0 +1,8 @@
+@import '~datocms-react-ui/styles.css';
+@import './reset.css';
+@import './sr-only.css';
+@import './typography.css';
+
+.layout {
+  padding: var(--spacing-l);
+}

@@ -1,0 +1,8 @@
+.uploadContainer {
+  display: flex;
+  gap: var(--spacing-m);
+  align-items: center;
+  margin-top: var(--spacing-m);
+  margin-bottom: var(--spacing-l);
+  height: 50px;
+}
