@@ -17,10 +17,10 @@
   },
   "dependencies": {
     "@datocms/cma-client-browser": "^2.0.0",
-    "@types/lodash": "^4.14.195",
-    "@types/node": "^20.3.3",
-    "@types/react": "^18.2.14",
-    "@types/react-dom": "^18.2.6",
+    "@types/lodash": "^4.14.197",
+    "@types/node": "^20.4.9",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
     "@types/uuid": "^9.0.2",
     "classnames": "^2.3.2",
     "datocms-plugin-sdk": "^0.7.14",
@@ -32,18 +32,18 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.6",
-    "@babel/preset-env": "^7.22.6",
+    "@babel/core": "^7.22.10",
+    "@babel/preset-env": "^7.22.10",
     "@babel/preset-react": "^7.22.5",
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-prettier": "^5.0.0",
     "html-webpack-plugin": "^5.5.3",
     "husky": "^8.0.3",
     "mini-css-extract-plugin": "^2.7.6",
-    "prettier": "2.8.8",
+    "prettier": "^3.0.1",
     "ts-loader": "^9.4.4",
-    "webpack": "^5.88.1",
+    "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1"
   },
@@ -84,7 +84,15 @@
       "prettier"
     ],
     "rules": {
-      "no-console": 1,
+      "no-console": [
+        "error",
+        {
+          "allow": [
+            "warn",
+            "error"
+          ]
+        }
+      ],
       "prettier/prettier": 1
     }
   },
