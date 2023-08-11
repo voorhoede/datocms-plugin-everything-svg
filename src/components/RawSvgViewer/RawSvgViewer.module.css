@@ -11,7 +11,9 @@
 
 .input {
   border-color: transparent;
-  box-shadow: 0 0 0 5px #fff, 0 0 0 8px var(--semi-transparent-accent-color);
+  box-shadow:
+    0 0 0 5px #fff,
+    0 0 0 8px var(--semi-transparent-accent-color);
 }
 
 .editing .input {
