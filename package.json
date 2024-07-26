@@ -12,7 +12,7 @@
     "prettier": "prettier --write .",
     "pre-commit": "npm run prettier",
     "prepack": "npm run build",
-    "prepare": "husky install",
+    "prepare": "husky",
     "postversion": "git push --follow-tags"
   },
   "dependencies": {
