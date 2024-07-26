@@ -1,9 +1,9 @@
+import classNames from 'classnames'
 import { Spinner } from 'datocms-react-ui'
 import { ImageViewer, ImageViewerProps } from '../ImageViewer/ImageViewer'
 import { SvgUpload } from '../../lib/types'
 
-import styles from './ImageList.module.css'
-import classNames from 'classnames'
+import * as styles from './ImageList.module.css'
 
 type Props = {
   svgs?: SvgUpload[]
@@ -37,7 +37,6 @@ export function ImageList({
   return (
     <ul
       className={classNames(styles.root, {
-        [styles.isLoading]: isLoading,
         [styles.small]: size === 's',
       })}
     >

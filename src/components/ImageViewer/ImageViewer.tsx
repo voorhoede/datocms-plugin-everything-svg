@@ -6,7 +6,7 @@ import { Bin } from '../Icons/bin'
 import { SvgUpload } from '../../lib/types'
 import { useOutsideClick } from '../../hooks/useOutsideClick'
 
-import styles from './ImageViewer.module.css'
+import * as styles from './ImageViewer.module.css'
 
 export type ImageViewerProps = {
   image: SvgUpload
