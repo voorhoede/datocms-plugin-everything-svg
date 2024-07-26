@@ -4,9 +4,8 @@ import { Button, Canvas } from 'datocms-react-ui'
 import { ImageList } from '../../components/ImageList/ImageList'
 import { FieldParameters, GlobalParameters, SvgUpload } from '../../lib/types'
 import { ImageViewer } from '../../components/ImageViewer/ImageViewer'
-import { Bin } from '../../components/Icons/bin'
 
-import styles from './FieldExtension.module.css'
+import * as styles from './FieldExtension.module.css'
 
 type Props = {
   ctx: RenderFieldExtensionCtx

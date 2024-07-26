@@ -4,7 +4,7 @@ import { Canvas, SwitchField } from 'datocms-react-ui'
 import { FieldParameters, GlobalParameters, SvgUpload } from '../../lib/types'
 import { ImageList } from '../../components/ImageList/ImageList'
 
-import styles from './FieldExtensionConfigScreen.module.css'
+import * as styles from './FieldExtensionConfigScreen.module.css'
 
 type Props = {
   ctx: RenderManualFieldExtensionConfigScreenCtx

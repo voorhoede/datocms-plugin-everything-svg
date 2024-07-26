@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { SidebarPanel } from 'datocms-react-ui'
 import { SvgUpload } from '../../lib/types'
 
-import styles from './RawSvgViewer.module.css'
+import * as styles from './RawSvgViewer.module.css'
 
 type Props = {
   svg: SvgUpload

@@ -9,8 +9,8 @@ export default async function setUpdatedSvgArray(ctx: any, svgs?: SvgUpload[]) {
         field.attributes.appearance.parameters
 
       if (svgs && fieldParameters.selectedSvgs) {
-        const newPluginArray = fieldParameters.selectedSvgs.filter(
-          (fieldSvg) => svgs?.find((pluginSvg) => pluginSvg.id === fieldSvg.id),
+        const newPluginArray = fieldParameters.selectedSvgs.filter((fieldSvg) =>
+          svgs?.find((pluginSvg) => pluginSvg.id === fieldSvg.id),
         )
 
         await ctx.updateFieldAppearance(field.id, [

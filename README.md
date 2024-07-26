@@ -12,6 +12,8 @@
 * Name your SVG
 * Fetch from a `string` or `text` field
 
+> note: You can only upload svg's if you are an admin of the dato instance.
+
 ## Configuration
 
 First add this plugin via DatoCMS Settings > Plugins > Add (`/admin/plugins/new`).

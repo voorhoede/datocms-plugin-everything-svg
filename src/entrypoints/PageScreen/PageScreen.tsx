@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { v4 as uuid } from 'uuid'
 import { RenderPageCtx } from 'datocms-plugin-sdk'
 import { Canvas, Button, Spinner, SwitchField } from 'datocms-react-ui'
@@ -9,9 +9,9 @@ import { SvgViewer } from '../../components/SvgViewer/SvgViewer'
 import { Plus } from '../../components/Icons/plus'
 import { GlobalParameters, SvgUpload } from '../../lib/types'
 import { customModalId, defaultFilename } from '../../lib/constants'
-
-import styles from './PageScreen.module.css'
 import setUpdatedSvgArray from '../../lib/setUpdatedSvgArray'
+
+import * as styles from './PageScreen.module.css'
 
 type Props = {
   ctx: RenderPageCtx
@@ -36,7 +36,7 @@ export default function PageScreen({ ctx }: Props) {
       ...pluginParameters,
       svgs: [newSvg, ...(pluginParameters.svgs || [])],
     })
-    // ctx.notice('Svg uploaded successfully!')
+    ctx.notice('Svg uploaded successfully!')
     return
   }
 
@@ -117,7 +117,7 @@ export default function PageScreen({ ctx }: Props) {
     })
 
     await setUpdatedSvgArray(ctx, newSvgs)
-    // ctx.notice('Svg deleted successfully!')
+    ctx.notice('Svg deleted successfully!')
   }
 
   async function openUploadModal(svg: SvgUpload) {

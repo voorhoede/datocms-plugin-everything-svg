@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { FieldError } from 'datocms-react-ui'
+import classNames from 'classnames'
 import isSvg from 'is-svg'
 
-import styles from './SvgViewer.module.css'
-import classNames from 'classnames'
+import * as styles from './SvgViewer.module.css'
 
 type Props = {
   value: string
@@ -27,9 +27,7 @@ export function SvgViewer({
           Embeded svg
         </label>
         <textarea
-          className={classNames(styles.textarea, {
-            [styles.textareaError]: showError,
-          })}
+          className={styles.textarea}
           name="embeded-svg"
           id="embeded-svg"
           value={value}
