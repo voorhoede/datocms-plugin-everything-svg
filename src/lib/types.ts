@@ -7,19 +7,15 @@ export enum PageType {
 export enum PlacementType {
   Before = 'before',
   After = 'after',
-  MenuItems = 'menuItems',
-  Settings = 'settings',
-  Environment = 'environment',
-  Project = 'project',
-  Permissions = 'permissions',
-  Webhooks = 'webhooks',
-  Deployment = 'deployment',
-  SSO = 'sso',
-  AuditLog = 'auditLog',
-  Usage = 'usage',
   Content = 'content',
-  MediaArea = 'mediaArea',
-  ApiExplorer = 'apiExplorer',
+  Media = 'media',
+  Schema = 'schema',
+  Configuration = 'configuration',
+  CdaPlayground = 'cdaPlayground',
+  Properties = 'properties',
+  Permissions = 'permissions',
+  MenuItems = 'menuItems',
+  SeoPreferences = 'seoPreferences',
 }
 
 export type GlobalParameters = {

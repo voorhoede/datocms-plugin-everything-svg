@@ -21,23 +21,18 @@ export const placementOptions = [
 
 export const contentAreaSidebarItemPlacement = [
   { label: 'Menu items', value: PlacementType.MenuItems },
-  { label: 'Settings', value: PlacementType.Settings },
+  { label: 'Seo preferences', value: PlacementType.SeoPreferences },
 ]
 
 export const settingsAreaSidebarItemPlacement = [
-  { label: 'Environment', value: PlacementType.Environment },
-  { label: 'Project', value: PlacementType.Project },
+  { label: 'Properties', value: PlacementType.Properties },
   { label: 'Permissions', value: PlacementType.Permissions },
-  { label: 'Webhooks', value: PlacementType.Webhooks },
-  { label: 'Deployment', value: PlacementType.Deployment },
-  { label: 'SSO', value: PlacementType.SSO },
-  { label: 'Audit log', value: PlacementType.AuditLog },
-  { label: 'Usage', value: PlacementType.Usage },
 ]
 
 export const mainNavigationTabPlacement = [
   { label: 'Content', value: PlacementType.Content },
-  { label: 'Media', value: PlacementType.MediaArea },
-  { label: 'CDA Playground', value: PlacementType.ApiExplorer },
-  { label: 'Settings', value: PlacementType.Settings },
+  { label: 'Media', value: PlacementType.Media },
+  { label: 'Schema', value: PlacementType.Schema },
+  { label: 'Configuration', value: PlacementType.Configuration },
+  { label: 'CDA Playground', value: PlacementType.CdaPlayground },
 ]
