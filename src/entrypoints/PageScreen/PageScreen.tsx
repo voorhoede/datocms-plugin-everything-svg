@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { v4 as uuid } from 'uuid'
 import { RenderPageCtx } from 'datocms-plugin-sdk'
 import { Canvas, Button, Spinner, SwitchField } from 'datocms-react-ui'
