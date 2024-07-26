@@ -52,8 +52,8 @@ connect({
     const pluginParameters: GlobalParameters = ctx.plugin.attributes.parameters
 
     if (
-      pluginParameters.pageType &&
-      pluginParameters.pageType.value !== PageType.MainNavigationTabs
+      !ctx.currentRole.meta.final_permissions.can_edit_schema &&
+      pluginParameters.pageType?.value !== PageType.MainNavigationTabs
     ) {
       return []
     }
@@ -78,7 +78,10 @@ connect({
   contentAreaSidebarItems(ctx: IntentCtx) {
     const pluginParameters: GlobalParameters = ctx.plugin.attributes.parameters
 
-    if (pluginParameters.pageType?.value !== PageType.ContentAreaSidebarItems) {
+    if (
+      !ctx.currentRole.meta.final_permissions.can_edit_schema &&
+      pluginParameters.pageType?.value !== PageType.ContentAreaSidebarItems
+    ) {
       return []
     }
 
@@ -103,7 +106,7 @@ connect({
     const pluginParameters: GlobalParameters = ctx.plugin.attributes.parameters
 
     if (
-      !ctx.currentRole.attributes.can_edit_schema ||
+      !ctx.currentRole.meta.final_permissions.can_edit_schema &&
       pluginParameters.pageType?.value !==
         PageType.SettingsAreaSidebarItemGroups
     ) {
