@@ -193,6 +193,7 @@ connect({
       const fieldsWithThisPlugin = fieldsWithAnyPlugin.filter(
         (field) => field.attributes.appearance.editor === thisPluginId,
       )
+
       const currentItemTypeFieldIds =
         currentItemType.relationships.fields.data.map(({ id }) => id)
 
@@ -212,6 +213,11 @@ connect({
           // Try to trim it
           const trimmedField =
             typeof fieldData === 'string' ? fieldData.trim() : undefined
+
+          // Skip this field if it's blank
+          if(!trimmedField) {
+            continue
+          }
 
           return trimmedField // Can be a trimmed SVG string or undefined
         }
