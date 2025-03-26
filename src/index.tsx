@@ -190,40 +190,45 @@ connect({
       // Find fields using this plugin in this model
       const fieldsWithAnyPlugin = await ctx.loadFieldsUsingPlugin()
       const thisPluginId = ctx.plugin.id
-      const fieldsWithThisPlugin = fieldsWithAnyPlugin.filter(field => field.attributes.appearance.editor === thisPluginId)
+      const fieldsWithThisPlugin = fieldsWithAnyPlugin.filter(
+        (field) => field.attributes.appearance.editor === thisPluginId,
+      )
       const currentItemTypeFieldIds =
         currentItemType.relationships.fields.data.map(({ id }) => id)
 
       // Iterate through the model's plugin fields and find the first SVG
       const firstValidSvgFieldData = (() => {
         for (const { id } of fieldsWithThisPlugin) {
-          const fieldApiKey = ctx.fields[id]?.attributes.api_key;
+          const fieldApiKey = ctx.fields[id]?.attributes.api_key
 
           // Skip if this field isn't in the current model or doesn't have an API key
           if (!currentItemTypeFieldIds.includes(id) || !fieldApiKey) {
-            continue;
+            continue
           }
 
           // Look up the field data from the current record
-          const fieldData = item.attributes[fieldApiKey];
+          const fieldData = item.attributes[fieldApiKey]
 
           // Try to trim it
-          const trimmedField = typeof fieldData === 'string' ? fieldData.trim() : undefined
+          const trimmedField =
+            typeof fieldData === 'string' ? fieldData.trim() : undefined
 
           return trimmedField // Can be a trimmed SVG string or undefined
         }
-      })();
+      })()
 
       // Fall back to the default preview if there's no SVG found
-      if(!firstValidSvgFieldData) {
+      if (!firstValidSvgFieldData) {
         return undefined
       }
 
       // Otherwise B64 encode it and return it as a data URL
-      const b64svg = firstValidSvgFieldData ? btoa(firstValidSvgFieldData) : undefined;
+      const b64svg = firstValidSvgFieldData
+        ? btoa(firstValidSvgFieldData)
+        : undefined
       const modifiedPreview: ItemPresentationInfo = {
         title: title,
-        imageUrl: b64svg ? `data:image/svg+xml;base64,${b64svg}` : undefined
+        imageUrl: b64svg ? `data:image/svg+xml;base64,${b64svg}` : undefined,
       }
 
       return modifiedPreview
