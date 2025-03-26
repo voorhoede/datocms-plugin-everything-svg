@@ -166,8 +166,14 @@ connect({
   renderFieldExtension(_, ctx: RenderFieldExtensionCtx) {
     return render(<FieldExtension ctx={ctx} />)
   },
+
+  // Render thumbnails in collections view
   buildItemPresentationInfo(item, ctx) {
+
+    // We need to wrap it in an async IIFE because there's an `await ctx.loadFieldsUsingPlugin()` call later
     return (async () => {
+
+      // This hook doesn't know which model we're on, so we have to look up its ID from the record
       const {
         relationships: {
           item_type: {
@@ -176,10 +182,10 @@ connect({
         },
       } = item
 
-      // This hook doesn't know which model we're on, so we have to look it up
+      // ItemType info for the current model
       const currentItemType = ctx.itemTypes[currentItemTypeId]! // Plugin SDK will always load this
 
-      // Get the record's title
+      // Get the record's title from on its presentation attributes
       const titleFieldId = currentItemType.relationships?.title_field.data?.id
       const titleFieldApiKey =
         titleFieldId && ctx.fields[titleFieldId]?.attributes.api_key
@@ -194,10 +200,11 @@ connect({
         (field) => field.attributes.appearance.editor === thisPluginId,
       )
 
+      // Get all fields of the current model
       const currentItemTypeFieldIds =
         currentItemType.relationships.fields.data.map(({ id }) => id)
 
-      // Iterate through the model's plugin fields and find the first SVG
+      // Iterate through this model's plugin fields and find the first non-blank SVG
       const firstValidSvgFieldData = (() => {
         for (const { id } of fieldsWithThisPlugin) {
           const fieldApiKey = ctx.fields[id]?.attributes.api_key
@@ -215,7 +222,7 @@ connect({
             typeof fieldData === 'string' ? fieldData.trim() : undefined
 
           // Skip this field if it's blank
-          if(!trimmedField) {
+          if (!trimmedField) {
             continue
           }
 
@@ -236,7 +243,6 @@ connect({
         title: title,
         imageUrl: b64svg ? `data:image/svg+xml;base64,${b64svg}` : undefined,
       }
-
       return modifiedPreview
     })()
   },
