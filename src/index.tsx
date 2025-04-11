@@ -1,6 +1,7 @@
 import {
   connect,
   ContentAreaSidebarItem,
+  FileFieldValue,
   IntentCtx,
   type ItemPresentationInfo,
   MainNavigationTab,
@@ -169,10 +170,8 @@ connect({
 
   // Render thumbnails in collections view
   buildItemPresentationInfo(item, ctx) {
-
     // We need to wrap it in an async IIFE because there's an `await ctx.loadFieldsUsingPlugin()` call later
     return (async () => {
-
       // This hook doesn't know which model we're on, so we have to look up its ID from the record
       const {
         relationships: {
@@ -185,7 +184,22 @@ connect({
       // ItemType info for the current model
       const currentItemType = ctx.itemTypes[currentItemTypeId]! // Plugin SDK will always load this
 
-      // Get the record's title from on its presentation attributes
+      // Get the default preview image, if there is one
+      const defaultPreviewImageFieldId =
+        currentItemType.relationships?.image_preview_field.data?.id
+      const defaultPreviewImageFieldApiKey =
+        defaultPreviewImageFieldId &&
+        ctx.fields[defaultPreviewImageFieldId]?.attributes.api_key
+      const defaultPreviewImage = defaultPreviewImageFieldApiKey
+        ? (item.attributes[defaultPreviewImageFieldApiKey] as FileFieldValue)
+        : null
+
+      // Use the default preview image if there is one and skip all further processing
+      if (defaultPreviewImage?.upload_id) {
+        return undefined
+      }
+
+      // Get the record's title from its presentation attributes
       const titleFieldId = currentItemType.relationships?.title_field.data?.id
       const titleFieldApiKey =
         titleFieldId && ctx.fields[titleFieldId]?.attributes.api_key
