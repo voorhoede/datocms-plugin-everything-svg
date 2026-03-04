@@ -65,8 +65,11 @@ export async function createSvgRecord(
     svg_type: 'svg' | 'image'
     media_upload?: { upload_id: string }
   },
+  environment?: string,
 ): Promise<SvgRecord | null> {
-  const client = buildClient({ apiToken })
+  const clientOptions: any = { apiToken }
+  if (environment) clientOptions.environment = environment
+  const client = buildClient(clientOptions)
 
   try {
     const record = await client.items.create({
@@ -105,8 +108,11 @@ export async function updateSvgRecord(
     svg_type: 'svg' | 'image'
     media_upload: { upload_id: string }
   }>,
+  environment?: string,
 ): Promise<SvgRecord | null> {
-  const client = buildClient({ apiToken })
+  const clientOptions: any = { apiToken }
+  if (environment) clientOptions.environment = environment
+  const client = buildClient(clientOptions)
 
   try {
     const record = await client.items.update(recordId, data)
@@ -136,8 +142,11 @@ export async function updateSvgRecord(
 export async function deleteSvgRecord(
   apiToken: string,
   recordId: string,
+  environment?: string,
 ): Promise<boolean> {
-  const client = buildClient({ apiToken })
+  const clientOptions: any = { apiToken }
+  if (environment) clientOptions.environment = environment
+  const client = buildClient(clientOptions)
 
   try {
     await client.items.destroy(recordId)

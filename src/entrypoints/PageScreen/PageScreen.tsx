@@ -101,6 +101,7 @@ export default function PageScreen({ ctx }: Props) {
           svg_content: rawSvg,
           svg_type: 'svg',
         },
+        environment,
       )
 
       if (newRecord) {
@@ -150,6 +151,7 @@ export default function PageScreen({ ctx }: Props) {
             upload_id: svgUpload.id,
           },
         },
+        environment,
       )
 
       if (newRecord) {
@@ -193,7 +195,7 @@ export default function PageScreen({ ctx }: Props) {
     }
 
     // Delete the record
-    const success = await deleteSvgRecord(currentUserAccessToken, record.id)
+    const success = await deleteSvgRecord(currentUserAccessToken, record.id, environment)
 
     if (success) {
       setSvgRecords(svgRecords.filter((r) => r.id !== record.id))
@@ -255,6 +257,7 @@ export default function PageScreen({ ctx }: Props) {
       {
         name: svg.filename,
       },
+      environment,
     )
 
     if (updatedRecord) {
