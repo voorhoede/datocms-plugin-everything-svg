@@ -1,4 +1,7 @@
-import { buildClient, type ClientConfigOptions } from '@datocms/cma-client-browser'
+import {
+  buildClient,
+  type ClientConfigOptions,
+} from '@datocms/cma-client-browser'
 import type { SvgRecord, SvgUpload } from './types'
 
 // Helper to convert SvgRecord to SvgUpload format for compatibility
@@ -30,6 +33,20 @@ function buildCmaClient(apiToken: string, environment?: string) {
   return buildClient(config)
 }
 
+async function resolveUploadUrl(
+  client: ReturnType<typeof buildClient>,
+  record: SvgRecord,
+) {
+  if (record.svg_type === 'image' && record.media_upload) {
+    try {
+      const upload = await client.uploads.find(record.media_upload.upload_id)
+      record.media_upload.url = upload.url
+    } catch {
+      // Upload may have been deleted so leave url empty
+    }
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toSvgRecord(record: any): SvgRecord {
   const svgRecord: SvgRecord = {
@@ -42,7 +59,7 @@ function toSvgRecord(record: any): SvgRecord {
   if (record.media_upload && typeof record.media_upload === 'object') {
     svgRecord.media_upload = {
       upload_id: record.media_upload.upload_id,
-      url: record.media_upload.url,
+      url: '', // url is resolved separately with uploads.find()
     }
   }
 
@@ -65,7 +82,11 @@ export async function loadSvgRecords(
       version: 'current', // Include draft/unpublished records
     })
 
-    return records.map((record) => toSvgRecord(record))
+    const svgRecords = records.map((record) => toSvgRecord(record))
+
+    await Promise.all(svgRecords.map((r) => resolveUploadUrl(client, r)))
+
+    return svgRecords
   } catch (error) {
     console.error('Error loading SVG records:', error)
     return []
@@ -91,7 +112,10 @@ export async function createSvgRecord(
       ...data,
     })
 
-    return toSvgRecord(record)
+    const svgRecord = toSvgRecord(record)
+    await resolveUploadUrl(client, svgRecord)
+
+    return svgRecord
   } catch (error) {
     console.error('Error creating SVG record:', error)
     return null
