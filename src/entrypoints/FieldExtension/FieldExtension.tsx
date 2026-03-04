@@ -10,35 +10,12 @@ import {
   SvgRecord,
 } from '../../lib/types'
 import { ImageViewer } from '../../components/ImageViewer/ImageViewer'
-import { loadSvgRecords } from '../../lib/recordHelpers'
+import { loadSvgRecords, recordToSvgUpload } from '../../lib/recordHelpers'
 
 import * as styles from './FieldExtension.module.css'
 
 type Props = {
   ctx: RenderFieldExtensionCtx
-}
-
-// Helper to convert SvgRecord to SvgUpload format for compatibility
-function recordToSvgUpload(record: SvgRecord): SvgUpload {
-  const base = {
-    id: record.id,
-    filename: record.name,
-    raw: record.svg_content,
-  }
-
-  if (record.svg_type === 'image' && record.media_upload) {
-    return {
-      ...base,
-      type: 'image' as const,
-      imageId: record.media_upload.upload_id,
-      url: record.media_upload.url,
-    }
-  }
-
-  return {
-    ...base,
-    type: 'svg' as const,
-  }
 }
 
 export default function FieldExtension({ ctx }: Props) {

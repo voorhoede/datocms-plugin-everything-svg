@@ -1,5 +1,28 @@
 import { buildClient, type ClientConfigOptions } from '@datocms/cma-client-browser'
-import type { SvgRecord } from './types'
+import type { SvgRecord, SvgUpload } from './types'
+
+// Helper to convert SvgRecord to SvgUpload format for compatibility
+export function recordToSvgUpload(record: SvgRecord): SvgUpload {
+  const base = {
+    id: record.id,
+    filename: record.name || undefined,
+    raw: record.svg_content,
+  }
+
+  if (record.svg_type === 'image' && record.media_upload) {
+    return {
+      ...base,
+      type: 'image' as const,
+      imageId: record.media_upload.upload_id,
+      url: record.media_upload.url,
+    }
+  }
+
+  return {
+    ...base,
+    type: 'svg' as const,
+  }
+}
 
 function buildCmaClient(apiToken: string, environment?: string) {
   const config: ClientConfigOptions = { apiToken }
