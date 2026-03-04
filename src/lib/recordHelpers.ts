@@ -14,23 +14,15 @@ export async function loadSvgRecords(
   const client = buildClient(clientOptions)
 
   try {
-    const allRecords = await client.items.list({
+    const records = await client.items.list({
+      filter: { type: modelId },
       page: {
         limit: 500,
       },
       version: 'current', // Include draft/unpublished records
     })
 
-    // Filter manually by item_type
-    const records = allRecords.filter((record: any) => {
-      const itemTypeId =
-        record.item_type?.id || record.relationships?.item_type?.data?.id
-      return itemTypeId === modelId
-    })
-
     return records.map((record: any) => {
-      // CMA client returns data nested in different structures
-      // Check both direct access and attributes access
       const attrs = record.attributes || record
 
       const svgRecord: SvgRecord = {
