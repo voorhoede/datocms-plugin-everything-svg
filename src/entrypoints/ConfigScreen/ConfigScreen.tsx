@@ -126,12 +126,6 @@ export default function ConfigScreen({ ctx }: Props) {
     setIsCreatingModel(true)
 
     try {
-      console.log('Environment value:', ctx.environment)
-      console.log(
-        'Creating model with token:',
-        ctx.currentUserAccessToken?.substring(0, 20) + '...',
-      )
-
       const apiToken = ctx.currentUserAccessToken
 
       if (!apiToken) {
@@ -147,8 +141,6 @@ export default function ConfigScreen({ ctx }: Props) {
           ? ctx.environment
           : undefined
 
-      console.log('Passing environment:', envToPass)
-      console.log('Attempting to create model...')
       const model = await createSvgModel(apiToken, envToPass)
 
       // Update plugin parameters with the model ID

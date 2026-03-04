@@ -195,7 +195,11 @@ export default function PageScreen({ ctx }: Props) {
     }
 
     // Delete the record
-    const success = await deleteSvgRecord(currentUserAccessToken, record.id, environment)
+    const success = await deleteSvgRecord(
+      currentUserAccessToken,
+      record.id,
+      environment,
+    )
 
     if (success) {
       setSvgRecords(svgRecords.filter((r) => r.id !== record.id))

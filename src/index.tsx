@@ -46,20 +46,12 @@ connect({
   async onBoot(ctx: OnBootCtx) {
     const pluginParameters: GlobalParameters = ctx.plugin.attributes.parameters
 
-    console.log(
-      '[Plugin Boot] isSetupComplete:',
-      pluginParameters.isSetupComplete,
-    )
-    console.log('[Plugin Boot] svgModelId:', pluginParameters.svgModelId)
-
     // Check if setup is complete
     if (!pluginParameters.isSetupComplete) {
       // Check if the model already exists (in case setup was interrupted)
       const existingModelId = await checkIfModelExists(
         ctx.currentUserAccessToken!,
       )
-
-      console.log('[Plugin Boot] Found existing model ID:', existingModelId)
 
       if (existingModelId) {
         // Model exists, mark setup as complete
@@ -68,7 +60,6 @@ connect({
           svgModelId: existingModelId,
           isSetupComplete: true,
         })
-        console.log('[Plugin Boot] Auto-marked setup as complete')
       }
     }
 

@@ -12,14 +12,17 @@ export async function createSvgModel(apiToken: string, environment?: string) {
 
   try {
     // Create the model
-    const itemType = await client.itemTypes.create({
-      name: SVG_MODEL_NAME,
-      api_key: SVG_MODEL_API_KEY,
-      collection_appearance: 'table',
-      singleton: false,
-    }, {
-      skip_menu_item_creation: true,
-    })
+    const itemType = await client.itemTypes.create(
+      {
+        name: SVG_MODEL_NAME,
+        api_key: SVG_MODEL_API_KEY,
+        collection_appearance: 'table',
+        singleton: false,
+      },
+      {
+        skip_menu_item_creation: true,
+      },
+    )
 
     // Create the name field
     await client.fields.create(itemType.id, {
