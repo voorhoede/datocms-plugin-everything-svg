@@ -292,7 +292,7 @@ export default function PageScreen({ ctx }: Props) {
                     id="uploadToMedia"
                     label="Upload SVG to the Media library"
                     value={uploadToMediaLibrary}
-                    onChange={(newValue) => setUploadToMediaLibrary(newValue)}
+                    onChange={(newValue: boolean) => setUploadToMediaLibrary(newValue)}
                   />
                 </div>
               )}

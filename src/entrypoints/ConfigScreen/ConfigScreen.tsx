@@ -277,8 +277,8 @@ export default function ConfigScreen({ ctx }: Props) {
             selectInputProps={{
               options: pageTypeOptions,
             }}
-            onChange={(newValue) => {
-              const pageTypeValue = newValue as PageTypeOption
+            onChange={(newValue: PageTypeOption) => {
+              const pageTypeValue = newValue
               saveSettings({
                 pageType: pageTypeValue,
                 menuItemPlacement: getMenuItemPlacements(
@@ -296,8 +296,8 @@ export default function ConfigScreen({ ctx }: Props) {
             selectInputProps={{
               options: placementOptions,
             }}
-            onChange={(newValue) => {
-              const placementValue = newValue as PlacementOption
+            onChange={(newValue: PlacementOption) => {
+              const placementValue = newValue
               saveSettings({
                 placement: placementValue,
               })
@@ -314,8 +314,8 @@ export default function ConfigScreen({ ctx }: Props) {
             selectInputProps={{
               options: getMenuItemPlacements(selectedPageType.value),
             }}
-            onChange={(newValue) => {
-              const menuItemPlacementValue = newValue as MenuItemPlacementOption
+            onChange={(newValue: MenuItemPlacementOption) => {
+              const menuItemPlacementValue = newValue
               saveSettings({ menuItemPlacement: menuItemPlacementValue })
             }}
           />
