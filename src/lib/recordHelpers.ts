@@ -1,17 +1,37 @@
-import { buildClient } from '@datocms/cma-client-browser'
+import { buildClient, type ClientConfigOptions } from '@datocms/cma-client-browser'
 import type { SvgRecord } from './types'
+
+function buildCmaClient(apiToken: string, environment?: string) {
+  const config: ClientConfigOptions = { apiToken }
+  if (environment) config.environment = environment
+  return buildClient(config)
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toSvgRecord(record: any): SvgRecord {
+  const svgRecord: SvgRecord = {
+    id: record.id,
+    name: record.name || 'Untitled',
+    svg_content: record.svg_content || '',
+    svg_type: record.svg_type || 'svg',
+  }
+
+  if (record.media_upload && typeof record.media_upload === 'object') {
+    svgRecord.media_upload = {
+      upload_id: record.media_upload.upload_id,
+      url: record.media_upload.url,
+    }
+  }
+
+  return svgRecord
+}
 
 export async function loadSvgRecords(
   apiToken: string,
   modelId: string,
   environment?: string,
 ): Promise<SvgRecord[]> {
-  const clientOptions: any = { apiToken }
-  if (environment) {
-    clientOptions.environment = environment
-  }
-
-  const client = buildClient(clientOptions)
+  const client = buildCmaClient(apiToken, environment)
 
   try {
     const records = await client.items.list({
@@ -22,26 +42,7 @@ export async function loadSvgRecords(
       version: 'current', // Include draft/unpublished records
     })
 
-    return records.map((record: any) => {
-      const attrs = record.attributes || record
-
-      const svgRecord: SvgRecord = {
-        id: record.id as string,
-        name: (attrs.name as string) || 'Untitled',
-        svg_content: (attrs.svg_content as string) || '',
-        svg_type: (attrs.svg_type as 'svg' | 'image') || 'svg',
-      }
-
-      const mediaUpload = attrs.media_upload
-      if (mediaUpload && typeof mediaUpload === 'object') {
-        svgRecord.media_upload = {
-          upload_id: mediaUpload.upload_id as string,
-          url: mediaUpload.url as string,
-        }
-      }
-
-      return svgRecord
-    })
+    return records.map((record) => toSvgRecord(record))
   } catch (error) {
     console.error('Error loading SVG records:', error)
     return []
@@ -59,9 +60,7 @@ export async function createSvgRecord(
   },
   environment?: string,
 ): Promise<SvgRecord | null> {
-  const clientOptions: any = { apiToken }
-  if (environment) clientOptions.environment = environment
-  const client = buildClient(clientOptions)
+  const client = buildCmaClient(apiToken, environment)
 
   try {
     const record = await client.items.create({
@@ -69,22 +68,7 @@ export async function createSvgRecord(
       ...data,
     })
 
-    const svgRecord: SvgRecord = {
-      id: (record as any).id as string,
-      name: (record as any).name as string,
-      svg_content: (record as any).svg_content as string,
-      svg_type: (record as any).svg_type as 'svg' | 'image',
-    }
-
-    const mediaUpload = (record as any).media_upload
-    if (mediaUpload && typeof mediaUpload === 'object') {
-      svgRecord.media_upload = {
-        upload_id: mediaUpload.upload_id as string,
-        url: mediaUpload.url as string,
-      }
-    }
-
-    return svgRecord
+    return toSvgRecord(record)
   } catch (error) {
     console.error('Error creating SVG record:', error)
     return null
@@ -102,29 +86,12 @@ export async function updateSvgRecord(
   }>,
   environment?: string,
 ): Promise<SvgRecord | null> {
-  const clientOptions: any = { apiToken }
-  if (environment) clientOptions.environment = environment
-  const client = buildClient(clientOptions)
+  const client = buildCmaClient(apiToken, environment)
 
   try {
     const record = await client.items.update(recordId, data)
 
-    const svgRecord: SvgRecord = {
-      id: (record as any).id as string,
-      name: (record as any).name as string,
-      svg_content: (record as any).svg_content as string,
-      svg_type: (record as any).svg_type as 'svg' | 'image',
-    }
-
-    const mediaUpload = (record as any).media_upload
-    if (mediaUpload && typeof mediaUpload === 'object') {
-      svgRecord.media_upload = {
-        upload_id: mediaUpload.upload_id as string,
-        url: mediaUpload.url as string,
-      }
-    }
-
-    return svgRecord
+    return toSvgRecord(record)
   } catch (error) {
     console.error('Error updating SVG record:', error)
     return null
@@ -136,9 +103,7 @@ export async function deleteSvgRecord(
   recordId: string,
   environment?: string,
 ): Promise<boolean> {
-  const clientOptions: any = { apiToken }
-  if (environment) clientOptions.environment = environment
-  const client = buildClient(clientOptions)
+  const client = buildCmaClient(apiToken, environment)
 
   try {
     await client.items.destroy(recordId)

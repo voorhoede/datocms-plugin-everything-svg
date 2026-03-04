@@ -214,8 +214,7 @@ export default function PageScreen({ ctx }: Props) {
       return
     }
 
-    let item: any = null
-    item = await ctx.editUpload(svg.imageId)
+    const item = await ctx.editUpload(svg.imageId)
 
     if (item && item.deleted) {
       await deleteSvg(svg)

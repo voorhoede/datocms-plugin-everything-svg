@@ -1,8 +1,9 @@
-import { buildClient } from '@datocms/cma-client-browser'
+import { buildClient, type ClientConfigOptions } from '@datocms/cma-client-browser'
 import { SVG_MODEL_API_KEY, SVG_MODEL_NAME } from './constants'
+import type { SvgUpload } from './types'
 
 export async function createSvgModel(apiToken: string, environment?: string) {
-  const clientOptions: any = { apiToken }
+  const clientOptions: ClientConfigOptions = { apiToken }
 
   if (environment) {
     clientOptions.environment = environment
@@ -24,45 +25,33 @@ export async function createSvgModel(apiToken: string, environment?: string) {
       },
     )
 
-    // Create the name field
     await client.fields.create(itemType.id, {
       label: 'Name',
       api_key: 'name',
       field_type: 'string',
-      validators: {
-        required: {},
-      },
-    } as any)
+      validators: { required: {} },
+    })
 
-    // Create the svg_content field
     await client.fields.create(itemType.id, {
       label: 'SVG Content',
       api_key: 'svg_content',
       field_type: 'text',
-      validators: {
-        required: {},
-      },
-    } as any)
+      validators: { required: {} },
+    })
 
-    // Create the svg_type field
     await client.fields.create(itemType.id, {
       label: 'Type',
       api_key: 'svg_type',
       field_type: 'string',
-      validators: {
-        enum: {
-          values: ['svg', 'image'],
-        },
-      },
-    } as any)
+      validators: { enum: { values: ['svg', 'image'] } },
+    })
 
-    // Create the media_upload field (optional asset field)
     await client.fields.create(itemType.id, {
       label: 'Media Upload',
       api_key: 'media_upload',
       field_type: 'file',
       validators: {},
-    } as any)
+    })
 
     // Set the name field as the title field
     const nameField = await client.fields.list(itemType.id)
@@ -88,7 +77,7 @@ export async function checkIfModelExists(
   try {
     const itemTypes = await client.itemTypes.list()
     const svgModel = itemTypes.find(
-      (it: any) => it.api_key === SVG_MODEL_API_KEY,
+      (it) => it.api_key === SVG_MODEL_API_KEY,
     )
     return svgModel?.id || null
   } catch (error) {
@@ -100,30 +89,25 @@ export async function checkIfModelExists(
 export async function migrateSvgsToRecords(
   apiToken: string,
   modelId: string,
-  svgs: any[],
+  svgs: SvgUpload[],
 ) {
   const client = buildClient({ apiToken })
-  const migratedRecords: any[] = []
+  const migratedRecords = []
 
   for (const svg of svgs) {
     try {
-      const recordData: any = {
-        item_type: { type: 'item_type', id: modelId },
+      const recordData = {
+        item_type: { type: 'item_type' as const, id: modelId },
         name: svg.filename || 'Untitled SVG',
         svg_content: svg.raw,
         svg_type: svg.type,
-      }
-
-      // If it's an image type with media library reference, include the upload
-      if (svg.type === 'image' && svg.imageId) {
-        recordData.media_upload = {
-          upload_id: svg.imageId,
-        }
+        ...(svg.type === 'image' && svg.imageId
+          ? { media_upload: { upload_id: svg.imageId } }
+          : {}),
       }
 
       const record = await client.items.create(recordData)
-
-      migratedRecords.push(record as any)
+      migratedRecords.push(record)
     } catch (error) {
       console.error(`Error migrating SVG ${svg.filename || svg.id}:`, error)
     }
