@@ -40,4 +40,3 @@ export const mainNavigationTabPlacement = [
 // SVG Model constants
 export const SVG_MODEL_API_KEY = 'plugin_svg'
 export const SVG_MODEL_NAME = 'Plugin SVG'
-

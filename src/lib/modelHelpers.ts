@@ -1,4 +1,7 @@
-import { buildClient, type ClientConfigOptions } from '@datocms/cma-client-browser'
+import {
+  buildClient,
+  type ClientConfigOptions,
+} from '@datocms/cma-client-browser'
 import { SVG_MODEL_API_KEY, SVG_MODEL_NAME } from './constants'
 import type { SvgUpload } from './types'
 
@@ -76,9 +79,7 @@ export async function checkIfModelExists(
 
   try {
     const itemTypes = await client.itemTypes.list()
-    const svgModel = itemTypes.find(
-      (it) => it.api_key === SVG_MODEL_API_KEY,
-    )
+    const svgModel = itemTypes.find((it) => it.api_key === SVG_MODEL_API_KEY)
     return svgModel?.id || null
   } catch (error) {
     console.error('Error checking for SVG model:', error)
