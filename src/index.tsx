@@ -33,6 +33,7 @@ import {
   settingsAreaSidebarItemPlacement,
 } from './lib/constants'
 import setUpdatedSvgArray from './lib/setUpdatedSvgArray'
+import { checkIfModelExists } from './lib/modelHelpers'
 
 import './styles/index.css'
 
@@ -44,6 +45,25 @@ const fieldSettings = {
 connect({
   async onBoot(ctx: OnBootCtx) {
     const pluginParameters: GlobalParameters = ctx.plugin.attributes.parameters
+
+    // Check if setup is complete
+    if (!pluginParameters.isSetupComplete) {
+      // Check if the model already exists (in case setup was interrupted)
+      const existingModelId = await checkIfModelExists(
+        ctx.currentUserAccessToken!,
+      )
+
+      if (existingModelId) {
+        // Model exists, mark setup as complete
+        await ctx.updatePluginParameters({
+          ...pluginParameters,
+          svgModelId: existingModelId,
+          isSetupComplete: true,
+        })
+      }
+    }
+
+    // Still sync old parameter-based SVGs if they exist
     await setUpdatedSvgArray(ctx, pluginParameters.svgs)
   },
   renderConfigScreen(ctx: RenderConfigScreenCtx) {

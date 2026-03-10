@@ -34,7 +34,7 @@ export function ImageViewer({
   onClick,
 }: ImageViewerProps) {
   const [showDropdown, setShowDropdown] = useState(false)
-  let imageElement = null
+  let imageElement: JSX.Element | null = null
   const Component = onClick ? 'button' : component
   const dropdownRef = useOutsideClick(() => setShowDropdown(false))
 

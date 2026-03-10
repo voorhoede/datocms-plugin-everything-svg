@@ -36,3 +36,8 @@ export const mainNavigationTabPlacement = [
   { label: 'Configuration', value: PlacementType.Configuration },
   { label: 'CDA Playground', value: PlacementType.CdaPlayground },
 ]
+
+// SVG Model constants
+export const SVG_MODEL_API_KEY = 'plugin_svg'
+export const SVG_MODEL_NAME = 'Plugin SVG'
+

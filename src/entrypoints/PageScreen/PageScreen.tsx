@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { v4 as uuid } from 'uuid'
+import { useState, useEffect } from 'react'
 import { RenderPageCtx } from 'datocms-plugin-sdk'
 import { Canvas, Button, Spinner, SwitchField } from 'datocms-react-ui'
 import { Client, buildClient } from '@datocms/cma-client-browser'
@@ -7,9 +6,15 @@ import isSvg from 'is-svg'
 import { ImageList } from '../../components/ImageList/ImageList'
 import { SvgViewer } from '../../components/SvgViewer/SvgViewer'
 import { Plus } from '../../components/Icons/plus'
-import { GlobalParameters, SvgUpload } from '../../lib/types'
+import { GlobalParameters, SvgRecord, SvgUpload } from '../../lib/types'
 import { customModalId, defaultFilename } from '../../lib/constants'
-import setUpdatedSvgArray from '../../lib/setUpdatedSvgArray'
+import {
+  loadSvgRecords,
+  createSvgRecord,
+  updateSvgRecord,
+  deleteSvgRecord,
+  recordToSvgUpload,
+} from '../../lib/recordHelpers'
 
 import * as styles from './PageScreen.module.css'
 
@@ -20,10 +25,12 @@ type Props = {
 export default function PageScreen({ ctx }: Props) {
   let datoClient: Client
   const pluginParameters: GlobalParameters = ctx.plugin.attributes.parameters
+  const [svgRecords, setSvgRecords] = useState<SvgRecord[]>([])
   const [rawSvg, setRawSvg] = useState('')
   const [filename, setFilename] = useState(defaultFilename)
   const [isUploading, setIsUploading] = useState(false)
   const [isRemoving, setIsRemoving] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [uploadToMediaLibrary, setUploadToMediaLibrary] = useState(false)
 
   const { currentUserAccessToken, environment } = ctx
@@ -31,30 +38,56 @@ export default function PageScreen({ ctx }: Props) {
     datoClient = buildClient({ apiToken: currentUserAccessToken, environment })
   }
 
-  async function saveNewSvg(newSvg: SvgUpload) {
-    await ctx.updatePluginParameters({
-      ...pluginParameters,
-      svgs: [newSvg, ...(pluginParameters.svgs || [])],
-    })
-    ctx.notice('Svg uploaded successfully!')
-    return
-  }
+  // Load SVG records on mount
+  useEffect(() => {
+    async function loadSvgs() {
+      if (!pluginParameters.svgModelId || !currentUserAccessToken) {
+        setIsLoading(false)
+        return
+      }
+
+      const records = await loadSvgRecords(
+        currentUserAccessToken,
+        pluginParameters.svgModelId,
+        environment,
+      )
+      setSvgRecords(records)
+      setIsLoading(false)
+    }
+
+    loadSvgs()
+  }, [pluginParameters.svgModelId, currentUserAccessToken])
 
   async function saveRawSvg(rawSvg: string) {
     if (!rawSvg || !isSvg(rawSvg)) {
       return
     }
 
-    const newSvg: SvgUpload = {
-      id: uuid(),
-      filename: filename,
-      type: 'svg',
-      raw: rawSvg,
+    if (!pluginParameters.svgModelId || !currentUserAccessToken) {
+      ctx.alert('SVG model not found. Please complete setup.')
+      return
     }
 
     try {
       setIsUploading(true)
-      await saveNewSvg(newSvg)
+
+      const newRecord = await createSvgRecord(
+        currentUserAccessToken,
+        pluginParameters.svgModelId,
+        {
+          name: filename,
+          svg_content: rawSvg,
+          svg_type: 'svg',
+        },
+        environment,
+      )
+
+      if (newRecord) {
+        setSvgRecords([newRecord, ...svgRecords])
+        ctx.notice('SVG uploaded successfully!')
+      } else {
+        ctx.alert('Failed to create SVG record')
+      }
     } finally {
       setIsUploading(false)
       setRawSvg('')
@@ -67,26 +100,44 @@ export default function PageScreen({ ctx }: Props) {
       return
     }
 
+    if (!pluginParameters.svgModelId || !currentUserAccessToken) {
+      ctx.alert('SVG model not found. Please complete setup.')
+      return
+    }
+
     const svgData = new Blob([rawSvg], { type: 'image/svg+xml' })
     const svgFile = new File([svgData], filename)
 
     try {
       setIsUploading(true)
+
+      // Upload to media library
       const svgUpload = await datoClient.uploads.createFromFileOrBlob({
         fileOrBlob: svgFile,
         filename: `${filename}.svg`,
       })
 
-      const newSvg: SvgUpload = {
-        id: uuid(),
-        filename,
-        type: 'image',
-        imageId: svgUpload.id,
-        url: svgUpload.url,
-        raw: rawSvg,
-      }
+      // Create record with media library reference
+      const newRecord = await createSvgRecord(
+        currentUserAccessToken,
+        pluginParameters.svgModelId,
+        {
+          name: filename,
+          svg_content: rawSvg,
+          svg_type: 'image',
+          media_upload: {
+            upload_id: svgUpload.id,
+          },
+        },
+        environment,
+      )
 
-      await saveNewSvg(newSvg)
+      if (newRecord) {
+        setSvgRecords([newRecord, ...svgRecords])
+        ctx.notice('SVG uploaded successfully!')
+      } else {
+        ctx.alert('Failed to create SVG record')
+      }
     } finally {
       setIsUploading(false)
       setRawSvg('')
@@ -106,28 +157,46 @@ export default function PageScreen({ ctx }: Props) {
   }
 
   async function deleteSvg(svg: SvgUpload) {
-    if (svg.type === 'image') {
-      await removeImageSvg(svg.imageId)
+    if (!currentUserAccessToken) {
+      return
     }
 
-    const newSvgs = pluginParameters.svgs?.filter((item) => item.id !== svg.id)
-    await ctx.updatePluginParameters({
-      ...pluginParameters,
-      svgs: newSvgs,
-    })
+    // Find the actual record
+    const record = svgRecords.find((r) => r.id === svg.id)
+    if (!record) {
+      return
+    }
 
-    await setUpdatedSvgArray(ctx, newSvgs)
-    ctx.notice('Svg deleted successfully!')
+    // If it has a media upload, delete that first
+    if (record.svg_type === 'image' && record.media_upload) {
+      await removeImageSvg(record.media_upload.upload_id)
+    }
+
+    // Delete the record
+    const success = await deleteSvgRecord(
+      currentUserAccessToken,
+      record.id,
+      environment,
+    )
+
+    if (success) {
+      setSvgRecords(svgRecords.filter((r) => r.id !== record.id))
+      ctx.notice('SVG deleted successfully!')
+    } else {
+      ctx.alert('Failed to delete SVG')
+    }
   }
 
   async function openUploadModal(svg: SvgUpload) {
-    let item = null
-    if (svg.type === 'image') {
-      item = await ctx.editUpload(svg.imageId)
+    if (svg.type !== 'image') {
+      return
     }
+
+    const item = await ctx.editUpload(svg.imageId)
 
     if (item && item.deleted) {
       await deleteSvg(svg)
+      return
     }
 
     if (item && item.attributes.basename !== svg.filename) {
@@ -136,18 +205,21 @@ export default function PageScreen({ ctx }: Props) {
   }
 
   async function openCustomModal(svg: SvgUpload) {
-    let item: null | (SvgUpload & { deleted?: boolean }) = null
-    if (svg.type === 'svg') {
-      item = (await ctx.openModal({
-        id: customModalId,
-        title: 'Raw details',
-        width: 's',
-        parameters: { rawSvg: svg },
-      })) as SvgUpload & { deleted?: boolean }
+    if (svg.type !== 'svg') {
+      return
     }
+
+    let item: null | (typeof svg & { deleted?: boolean }) = null
+    item = (await ctx.openModal({
+      id: customModalId,
+      title: 'Raw details',
+      width: 's',
+      parameters: { rawSvg: svg },
+    })) as typeof svg & { deleted?: boolean }
 
     if (item && item.deleted) {
       await deleteSvg(svg)
+      return
     }
 
     if (item && item.filename !== svg.filename) {
@@ -156,17 +228,27 @@ export default function PageScreen({ ctx }: Props) {
   }
 
   async function renameSvg(svg: SvgUpload) {
-    const renamedSvgArray = pluginParameters.svgs?.map((item) => {
-      if (item.id === svg.id) {
-        return { ...item, filename: svg.filename }
-      }
-      return item
-    })
-    await ctx.updatePluginParameters({
-      ...pluginParameters,
-      svgs: renamedSvgArray,
-    })
-    ctx.notice('Svg renamed successfully!')
+    if (!currentUserAccessToken) {
+      return
+    }
+
+    const updatedRecord = await updateSvgRecord(
+      currentUserAccessToken,
+      svg.id,
+      {
+        name: svg.filename,
+      },
+      environment,
+    )
+
+    if (updatedRecord) {
+      setSvgRecords(
+        svgRecords.map((r) => (r.id === svg.id ? updatedRecord : r)),
+      )
+      ctx.notice('SVG renamed successfully!')
+    } else {
+      ctx.alert('Failed to rename SVG')
+    }
   }
 
   async function handleUpload(rawSvg: string) {
@@ -177,6 +259,9 @@ export default function PageScreen({ ctx }: Props) {
 
     await saveRawSvg(rawSvg)
   }
+
+  // Convert records to SvgUpload format for ImageList component
+  const svgUploads = svgRecords.map(recordToSvgUpload)
 
   return (
     <Canvas ctx={ctx}>
@@ -207,7 +292,7 @@ export default function PageScreen({ ctx }: Props) {
                     id="uploadToMedia"
                     label="Upload SVG to the Media library"
                     value={uploadToMediaLibrary}
-                    onChange={(newValue) => setUploadToMediaLibrary(newValue)}
+                    onChange={(newValue: boolean) => setUploadToMediaLibrary(newValue)}
                   />
                 </div>
               )}
@@ -217,15 +302,18 @@ export default function PageScreen({ ctx }: Props) {
 
         <h3 className="h2">Uploaded svgs</h3>
 
-        {pluginParameters.svgs?.length === 0 && <p>Nothing to show (yet)</p>}
-        <ImageList
-          svgs={pluginParameters.svgs}
-          onDelete={isRemoving ? undefined : deleteSvg}
-          onShowUpload={openUploadModal}
-          onShowRaw={openCustomModal}
-          isLoading={isRemoving}
-          showTag
-        />
+        {isLoading && <Spinner />}
+        {!isLoading && svgUploads.length === 0 && <p>Nothing to show (yet)</p>}
+        {!isLoading && (
+          <ImageList
+            svgs={svgUploads}
+            onDelete={isRemoving ? undefined : deleteSvg}
+            onShowUpload={openUploadModal}
+            onShowRaw={openCustomModal}
+            isLoading={isRemoving}
+            showTag
+          />
+        )}
       </div>
     </Canvas>
   )

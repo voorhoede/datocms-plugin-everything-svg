@@ -23,6 +23,8 @@ export type GlobalParameters = {
   menuItemPlacement?: MenuItemPlacementOption
   pageType?: PageTypeOption
   svgs?: SvgUpload[]
+  svgModelId?: string // ID of the 'Plugin SVG' model
+  isSetupComplete?: boolean // Whether the model has been created
 }
 
 export type FieldParameters = {
@@ -66,4 +68,16 @@ export type MenuItemPlacementOption = {
 
 export type SVGIcon = {
   id: string
+}
+
+// Record-based SVG storage types
+export type SvgRecord = {
+  id: string
+  name: string
+  svg_content: string
+  svg_type: 'svg' | 'image'
+  media_upload?: {
+    upload_id: string
+    url: string
+  }
 }
