@@ -1,6 +1,6 @@
 # DatoCMS plugin: Everything SVG
 
-**This DatoCMS plugin lets you upload SVGs to your DatoCMS project and select the raw SVG it in your models. This way you can have the raw SVG and fetch it from DatoCMS from a `text` or `string` field.**
+**This DatoCMS plugin lets you upload SVGs to your DatoCMS project and select the raw SVG in your models. This way you can have the raw SVG and fetch it from a `text` or `string` field.**
 
 ![](https://github.com/voorhoede/datocms-plugin-everything-svg/raw/main/docs/everything-svg.png)
 
