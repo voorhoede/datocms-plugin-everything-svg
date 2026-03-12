@@ -91,21 +91,30 @@ export default function ConfigScreen({ ctx }: Props) {
     setIsMigrating(true)
 
     try {
-      await migrateSvgsToRecords(
+      const migrated = await migrateSvgsToRecords(
         ctx.currentUserAccessToken!,
         pluginParameters.svgModelId,
         svgsToMigrate,
       )
 
-      // Clear the parameter-based SVGs after successful migration
+      const failedCount = svgsToMigrate.length - migrated.length
+
+      // Clear the parameter-based SVGs after migration
+      const { svgs: _oldSvgs, ...restParams } = pluginParameters
       await ctx.updatePluginParameters({
-        ...pluginParameters,
+        ...restParams,
         svgs: [],
       })
 
-      ctx.notice(
-        `Successfully migrated ${svgsToMigrate.length} SVG(s) to records!`,
-      )
+      if (failedCount > 0) {
+        ctx.alert(
+          `${migrated.length} SVG(s) migrated successfully, but ${failedCount} failed. Check the browser console for details.`,
+        )
+      } else {
+        ctx.notice(
+          `Successfully migrated ${migrated.length} SVG(s) to records!`,
+        )
+      }
     } catch (error) {
       console.error('Migration error:', error)
       ctx.alert(
@@ -130,14 +139,7 @@ export default function ConfigScreen({ ctx }: Props) {
     setIsCreatingModel(true)
 
     try {
-      const apiToken = ctx.currentUserAccessToken
-
-      if (!apiToken) {
-        ctx.alert(
-          'API token not available. You may need to configure this manually.',
-        )
-        return
-      }
+      const apiToken = ctx.currentUserAccessToken!
 
       // Only pass environment if it's not a UI navigation state
       const envToPass =
@@ -153,9 +155,17 @@ export default function ConfigScreen({ ctx }: Props) {
 
       // Migrate existing svgs to records before saving parameters
       const svgsToMigrate = pluginParameters.svgs || []
+      let migratedCount = 0
       if (svgsToMigrate.length > 0) {
-        await migrateSvgsToRecords(apiToken, model.id, svgsToMigrate)
+        const migrated = await migrateSvgsToRecords(
+          apiToken,
+          model.id,
+          svgsToMigrate,
+        )
+        migratedCount = migrated.length
       }
+
+      const failedCount = svgsToMigrate.length - migratedCount
 
       // Save parameters without old svgs array to stay under size limit
       const { svgs: _oldSvgs, ...restParams } = pluginParameters
@@ -165,11 +175,17 @@ export default function ConfigScreen({ ctx }: Props) {
         isSetupComplete: true,
       })
 
-      const message =
-        svgsToMigrate.length > 0
-          ? `SVG model created and ${svgsToMigrate.length} SVG(s) migrated!`
-          : 'SVG model created successfully!'
-      ctx.notice(message)
+      if (failedCount > 0) {
+        ctx.alert(
+          `SVG model created. ${migratedCount} SVG(s) migrated successfully, but ${failedCount} failed. Check the browser console for details.`,
+        )
+      } else if (migratedCount > 0) {
+        ctx.notice(
+          `SVG model created and ${migratedCount} SVG(s) migrated successfully!`,
+        )
+      } else {
+        ctx.notice('SVG model created successfully!')
+      }
     } catch (err) {
       console.error('Error creating model:', err)
       ctx.alert(
