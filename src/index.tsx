@@ -17,10 +17,10 @@ import {
 import ConfigScreen from './entrypoints/ConfigScreen/ConfigScreen'
 import PageScreen from './entrypoints/PageScreen/PageScreen'
 import FieldExtensionConfigScreen from './entrypoints/FieldExtensionConfigScreen/FieldExtensionConfigScreen'
-import FieldExtension from './entrypoints/FieldExtension/FieldExtension'
 import CustomModal from './entrypoints/CustomModal/CustomModal'
 import { render } from './lib/render'
 import { GlobalParameters, PageType } from './lib/types'
+import FieldExtension from './entrypoints/FieldExtension/FieldExtension'
 import {
   contentAreaSidebarItemPlacement,
   customModalId,
@@ -32,8 +32,8 @@ import {
   placementOptions,
   settingsAreaSidebarItemPlacement,
 } from './lib/constants'
-import setUpdatedSvgArray from './lib/setUpdatedSvgArray'
 import { checkIfModelExists } from './lib/modelHelpers'
+import setUpdatedSvgArray from './lib/setUpdatedSvgArray'
 
 import './styles/index.css'
 
@@ -51,6 +51,7 @@ connect({
       // Check if the model already exists (in case setup was interrupted)
       const existingModelId = await checkIfModelExists(
         ctx.currentUserAccessToken!,
+        ctx.environment,
       )
 
       if (existingModelId) {

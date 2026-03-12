@@ -2,11 +2,11 @@ import { useMemo, useState } from 'react'
 
 import { RenderConfigScreenCtx } from 'datocms-plugin-sdk'
 import {
+  Button,
   Canvas,
   Form,
   SelectField,
   FieldGroup,
-  Button,
   Spinner,
 } from 'datocms-react-ui'
 import {
@@ -17,7 +17,11 @@ import {
 } from '../../lib/types'
 import { pageTypeOptions, placementOptions } from '../../lib/constants'
 import { getMenuItemPlacements } from '../../lib/helpers'
-import { migrateSvgsToRecords, createSvgModel } from '../../lib/modelHelpers'
+import {
+  migrateSvgsToRecords,
+  createSvgModel,
+  checkIfModelExists,
+} from '../../lib/modelHelpers'
 
 type Props = {
   ctx: RenderConfigScreenCtx
@@ -141,16 +145,31 @@ export default function ConfigScreen({ ctx }: Props) {
           ? ctx.environment
           : undefined
 
-      const model = await createSvgModel(apiToken, envToPass)
+      // Reuse existing model if it was already created
+      const existingModelId = await checkIfModelExists(apiToken, envToPass)
+      const model = existingModelId
+        ? { id: existingModelId }
+        : await createSvgModel(apiToken, envToPass)
 
-      // Update plugin parameters with the model ID
+      // Migrate existing svgs to records before saving parameters
+      const svgsToMigrate = pluginParameters.svgs || []
+      if (svgsToMigrate.length > 0) {
+        await migrateSvgsToRecords(apiToken, model.id, svgsToMigrate)
+      }
+
+      // Save parameters without old svgs array to stay under size limit
+      const { svgs: _oldSvgs, ...restParams } = pluginParameters
       await ctx.updatePluginParameters({
-        ...pluginParameters,
+        ...restParams,
         svgModelId: model.id,
         isSetupComplete: true,
       })
 
-      ctx.notice('SVG model created successfully!')
+      const message =
+        svgsToMigrate.length > 0
+          ? `SVG model created and ${svgsToMigrate.length} SVG(s) migrated!`
+          : 'SVG model created successfully!'
+      ctx.notice(message)
     } catch (err) {
       console.error('Error creating model:', err)
       ctx.alert(
