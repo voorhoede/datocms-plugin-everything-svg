@@ -91,6 +91,12 @@ export default function ConfigScreen({ ctx }: Props) {
     setIsMigrating(true)
 
     try {
+      // Log backup of all SVGs before migration in case of failure
+      console.info(
+        `[Everything SVG] Backing up ${svgsToMigrate.length} SVG(s) before migration. Copy this data if you need to recover:`,
+        JSON.stringify(svgsToMigrate),
+      )
+
       const migrated = await migrateSvgsToRecords(
         ctx.currentUserAccessToken!,
         pluginParameters.svgModelId,
@@ -157,6 +163,11 @@ export default function ConfigScreen({ ctx }: Props) {
       const svgsToMigrate = pluginParameters.svgs || []
       let migratedCount = 0
       if (svgsToMigrate.length > 0) {
+        // Log backup of all SVGs before migration in case of failure
+        console.info(
+          `[Everything SVG] Backing up ${svgsToMigrate.length} SVG(s) before migration. Copy this data if you need to recover:`,
+          JSON.stringify(svgsToMigrate),
+        )
         const migrated = await migrateSvgsToRecords(
           apiToken,
           model.id,
