@@ -149,7 +149,10 @@ export default function ConfigScreen({ ctx }: Props) {
       const apiToken = ctx.currentUserAccessToken!
 
       // Reuse existing model if it was already created
-      const existingModelId = await checkIfModelExists(apiToken, ctx.environment)
+      const existingModelId = await checkIfModelExists(
+        apiToken,
+        ctx.environment,
+      )
       const model = existingModelId
         ? { id: existingModelId }
         : await createSvgModel(apiToken, ctx.environment)
