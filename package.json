@@ -1,7 +1,7 @@
 {
   "name": "datocms-plugin-everything-svg",
   "homepage": "https://github.com/voorhoede/datocms-plugin-everything-svg.git",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A DatoCMS plugin that lets you upload SVGs to your DatoCMS project and select the raw SVG it in your models",
   "scripts": {
     "start": "cross-env BROWSER='none' PUBLIC_URL='/' webpack-dev-server --mode=development",
