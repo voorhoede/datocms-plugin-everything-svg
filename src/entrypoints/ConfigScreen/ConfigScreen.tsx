@@ -2,11 +2,11 @@ import { useMemo, useState } from 'react'
 
 import { RenderConfigScreenCtx } from 'datocms-plugin-sdk'
 import {
+  Button,
   Canvas,
   Form,
   SelectField,
   FieldGroup,
-  Button,
   Spinner,
 } from 'datocms-react-ui'
 import {
@@ -17,7 +17,11 @@ import {
 } from '../../lib/types'
 import { pageTypeOptions, placementOptions } from '../../lib/constants'
 import { getMenuItemPlacements } from '../../lib/helpers'
-import { migrateSvgsToRecords, createSvgModel } from '../../lib/modelHelpers'
+import {
+  migrateSvgsToRecords,
+  createSvgModel,
+  checkIfModelExists,
+} from '../../lib/modelHelpers'
 
 type Props = {
   ctx: RenderConfigScreenCtx
@@ -87,21 +91,36 @@ export default function ConfigScreen({ ctx }: Props) {
     setIsMigrating(true)
 
     try {
-      await migrateSvgsToRecords(
+      // Log backup of all SVGs before migration in case of failure
+      console.info(
+        `[Everything SVG] Backing up ${svgsToMigrate.length} SVG(s) before migration. Copy this data if you need to recover:`,
+        JSON.stringify(svgsToMigrate),
+      )
+
+      const migrated = await migrateSvgsToRecords(
         ctx.currentUserAccessToken!,
         pluginParameters.svgModelId,
         svgsToMigrate,
       )
 
-      // Clear the parameter-based SVGs after successful migration
+      const failedCount = svgsToMigrate.length - migrated.length
+
+      // Clear the parameter-based SVGs after migration
+      const { svgs: _oldSvgs, ...restParams } = pluginParameters
       await ctx.updatePluginParameters({
-        ...pluginParameters,
+        ...restParams,
         svgs: [],
       })
 
-      ctx.notice(
-        `Successfully migrated ${svgsToMigrate.length} SVG(s) to records!`,
-      )
+      if (failedCount > 0) {
+        ctx.alert(
+          `${migrated.length} SVG(s) migrated successfully, but ${failedCount} failed. Check the browser console for details.`,
+        )
+      } else {
+        ctx.notice(
+          `Successfully migrated ${migrated.length} SVG(s) to records!`,
+        )
+      }
     } catch (error) {
       console.error('Migration error:', error)
       ctx.alert(
@@ -126,14 +145,7 @@ export default function ConfigScreen({ ctx }: Props) {
     setIsCreatingModel(true)
 
     try {
-      const apiToken = ctx.currentUserAccessToken
-
-      if (!apiToken) {
-        ctx.alert(
-          'API token not available. You may need to configure this manually.',
-        )
-        return
-      }
+      const apiToken = ctx.currentUserAccessToken!
 
       // Only pass environment if it's not a UI navigation state
       const envToPass =
@@ -141,16 +153,50 @@ export default function ConfigScreen({ ctx }: Props) {
           ? ctx.environment
           : undefined
 
-      const model = await createSvgModel(apiToken, envToPass)
+      // Reuse existing model if it was already created
+      const existingModelId = await checkIfModelExists(apiToken, envToPass)
+      const model = existingModelId
+        ? { id: existingModelId }
+        : await createSvgModel(apiToken, envToPass)
 
-      // Update plugin parameters with the model ID
+      // Migrate existing svgs to records before saving parameters
+      const svgsToMigrate = pluginParameters.svgs || []
+      let migratedCount = 0
+      if (svgsToMigrate.length > 0) {
+        // Log backup of all SVGs before migration in case of failure
+        console.info(
+          `[Everything SVG] Backing up ${svgsToMigrate.length} SVG(s) before migration. Copy this data if you need to recover:`,
+          JSON.stringify(svgsToMigrate),
+        )
+        const migrated = await migrateSvgsToRecords(
+          apiToken,
+          model.id,
+          svgsToMigrate,
+        )
+        migratedCount = migrated.length
+      }
+
+      const failedCount = svgsToMigrate.length - migratedCount
+
+      // Save parameters without old svgs array to stay under size limit
+      const { svgs: _oldSvgs, ...restParams } = pluginParameters
       await ctx.updatePluginParameters({
-        ...pluginParameters,
+        ...restParams,
         svgModelId: model.id,
         isSetupComplete: true,
       })
 
-      ctx.notice('SVG model created successfully!')
+      if (failedCount > 0) {
+        ctx.alert(
+          `SVG model created. ${migratedCount} SVG(s) migrated successfully, but ${failedCount} failed. Check the browser console for details.`,
+        )
+      } else if (migratedCount > 0) {
+        ctx.notice(
+          `SVG model created and ${migratedCount} SVG(s) migrated successfully!`,
+        )
+      } else {
+        ctx.notice('SVG model created successfully!')
+      }
     } catch (err) {
       console.error('Error creating model:', err)
       ctx.alert(

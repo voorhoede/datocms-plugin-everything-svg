@@ -74,8 +74,11 @@ export async function createSvgModel(apiToken: string, environment?: string) {
 
 export async function checkIfModelExists(
   apiToken: string,
+  environment?: string,
 ): Promise<string | null> {
-  const client = buildClient({ apiToken })
+  const config: ClientConfigOptions = { apiToken }
+  if (environment) config.environment = environment
+  const client = buildClient(config)
 
   try {
     const itemTypes = await client.itemTypes.list()
