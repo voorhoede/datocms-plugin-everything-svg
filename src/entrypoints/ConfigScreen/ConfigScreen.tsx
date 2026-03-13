@@ -97,16 +97,11 @@ export default function ConfigScreen({ ctx }: Props) {
         JSON.stringify(svgsToMigrate),
       )
 
-      const envToPass =
-        ctx.environment && !ctx.environment.includes('navigation')
-          ? ctx.environment
-          : undefined
-
       const migrated = await migrateSvgsToRecords(
         ctx.currentUserAccessToken!,
         pluginParameters.svgModelId,
         svgsToMigrate,
-        envToPass,
+        ctx.environment,
       )
 
       const failedCount = svgsToMigrate.length - migrated.length
@@ -153,17 +148,11 @@ export default function ConfigScreen({ ctx }: Props) {
     try {
       const apiToken = ctx.currentUserAccessToken!
 
-      // Only pass environment if it's not a UI navigation state
-      const envToPass =
-        ctx.environment && !ctx.environment.includes('navigation')
-          ? ctx.environment
-          : undefined
-
       // Reuse existing model if it was already created
-      const existingModelId = await checkIfModelExists(apiToken, envToPass)
+      const existingModelId = await checkIfModelExists(apiToken, ctx.environment)
       const model = existingModelId
         ? { id: existingModelId }
-        : await createSvgModel(apiToken, envToPass)
+        : await createSvgModel(apiToken, ctx.environment)
 
       // Migrate existing svgs to records before saving parameters
       const svgsToMigrate = pluginParameters.svgs || []
@@ -178,7 +167,7 @@ export default function ConfigScreen({ ctx }: Props) {
           apiToken,
           model.id,
           svgsToMigrate,
-          envToPass,
+          ctx.environment,
         )
         migratedCount = migrated.length
       }
