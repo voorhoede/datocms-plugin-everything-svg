@@ -94,8 +94,11 @@ export async function migrateSvgsToRecords(
   apiToken: string,
   modelId: string,
   svgs: SvgUpload[],
+  environment?: string,
 ) {
-  const client = buildClient({ apiToken })
+  const config: ClientConfigOptions = { apiToken }
+  if (environment) config.environment = environment
+  const client = buildClient(config)
   const migratedRecords = []
 
   for (const svg of svgs) {
