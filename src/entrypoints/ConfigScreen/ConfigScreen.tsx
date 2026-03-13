@@ -97,10 +97,16 @@ export default function ConfigScreen({ ctx }: Props) {
         JSON.stringify(svgsToMigrate),
       )
 
+      const envToPass =
+        ctx.environment && !ctx.environment.includes('navigation')
+          ? ctx.environment
+          : undefined
+
       const migrated = await migrateSvgsToRecords(
         ctx.currentUserAccessToken!,
         pluginParameters.svgModelId,
         svgsToMigrate,
+        envToPass,
       )
 
       const failedCount = svgsToMigrate.length - migrated.length
@@ -172,6 +178,7 @@ export default function ConfigScreen({ ctx }: Props) {
           apiToken,
           model.id,
           svgsToMigrate,
+          envToPass,
         )
         migratedCount = migrated.length
       }
