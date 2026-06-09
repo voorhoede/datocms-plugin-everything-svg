@@ -264,7 +264,7 @@ export default function PageScreen({ ctx }: Props) {
   const svgUploads = svgRecords.map(recordToSvgUpload)
 
   return (
-    <Canvas ctx={ctx}>
+    <Canvas ctx={ctx} noAutoResizer>
       <div className="layout">
         <SvgViewer
           value={rawSvg}

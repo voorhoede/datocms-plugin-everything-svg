@@ -1,10 +1,11 @@
 import {
   connect,
   ContentAreaSidebarItem,
+  ContentAreaSidebarItemsCtx,
   FileFieldValue,
-  IntentCtx,
   type ItemPresentationInfo,
   MainNavigationTab,
+  MainNavigationTabsCtx,
   OnBootCtx,
   RenderConfigScreenCtx,
   RenderFieldExtensionCtx,
@@ -12,6 +13,7 @@ import {
   RenderModalCtx,
   RenderPageCtx,
   SettingsAreaSidebarItemGroup,
+  SettingsAreaSidebarItemGroupsCtx,
 } from 'datocms-plugin-sdk'
 
 import ConfigScreen from './entrypoints/ConfigScreen/ConfigScreen'
@@ -70,7 +72,7 @@ connect({
   renderConfigScreen(ctx: RenderConfigScreenCtx) {
     return render(<ConfigScreen ctx={ctx} />)
   },
-  mainNavigationTabs(ctx: IntentCtx) {
+  mainNavigationTabs(ctx: MainNavigationTabsCtx) {
     const pluginParameters: GlobalParameters = ctx.plugin.attributes.parameters
 
     if (
@@ -97,7 +99,7 @@ connect({
       },
     ]
   },
-  contentAreaSidebarItems(ctx: IntentCtx) {
+  contentAreaSidebarItems(ctx: ContentAreaSidebarItemsCtx) {
     const pluginParameters: GlobalParameters = ctx.plugin.attributes.parameters
 
     if (
@@ -124,7 +126,7 @@ connect({
       },
     ]
   },
-  settingsAreaSidebarItemGroups(ctx: IntentCtx) {
+  settingsAreaSidebarItemGroups(ctx: SettingsAreaSidebarItemGroupsCtx) {
     const pluginParameters: GlobalParameters = ctx.plugin.attributes.parameters
 
     if (

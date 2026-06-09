@@ -12,8 +12,8 @@
 .input {
   border-color: transparent;
   box-shadow:
-    0 0 0 5px #fff,
-    0 0 0 8px var(--semi-transparent-accent-color);
+    0 0 0 1px var(--color--focus--border),
+    0 0 0 4px var(--color--focus--outline);
 }
 
 .editing .input {
@@ -32,14 +32,14 @@
 }
 
 .editingText {
-  color: var(--light-body-color);
+  color: var(--color--ink-subtle);
 }
 
 .button {
   border: none;
   background: none;
   padding: 0;
-  color: var(--accent-color);
+  color: var(--color--ink-link);
 }
 
 .button:hover {
@@ -48,7 +48,7 @@
 }
 
 .deleteButton {
-  color: var(--alert-color);
+  color: var(--color--ink-danger);
 }
 
 .svgLogo {
@@ -62,4 +62,12 @@
 
 .rawCode {
   white-space: pre-wrap;
+  margin: 0;
+  padding: var(--spacing-m);
+  color: var(--color--code--ink);
+  background: var(--color--code--surface);
+  border-radius: 4px;
+  font-family: var(--monospaced-font-family);
+  font-size: var(--font-size-s);
+  line-height: 1.4;
 }

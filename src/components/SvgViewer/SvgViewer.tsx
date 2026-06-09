@@ -64,16 +64,16 @@ export function SvgViewer({
           )}
         </div>
 
-        <div className={styles.viewerFilename}>
-          {isSvg(value) && onChangeFilename && (
+        {isSvg(value) && onChangeFilename && (
+          <div className={styles.viewerFilename}>
             <input
               className={styles.filenameInput}
               value={filename}
               onChange={(e) => onChangeFilename(e.target.value)}
               autoFocus
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </form>
   )
