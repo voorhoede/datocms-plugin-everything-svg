@@ -229,8 +229,8 @@ export default function ConfigScreen({ ctx }: Props) {
 
           <div
             style={{
-              background: 'var(--extra-light-bg)',
-              border: '1px solid var(--border-color)',
+              background: 'var(--color--surface-muted)',
+              border: '1px solid var(--color--border)',
               borderRadius: '4px',
               padding: '1.5rem',
               marginBottom: '1.5rem',
@@ -262,7 +262,7 @@ export default function ConfigScreen({ ctx }: Props) {
 
             <details style={{ marginTop: '1rem', fontSize: '0.9rem' }}>
               <summary
-                style={{ cursor: 'pointer', color: 'var(--light-body-color)' }}
+                style={{ cursor: 'pointer', color: 'var(--color--ink-subtle)' }}
               >
                 Or create manually...
               </summary>
@@ -295,7 +295,7 @@ export default function ConfigScreen({ ctx }: Props) {
           <p
             style={{
               fontSize: '0.875rem',
-              color: 'var(--light-body-color)',
+              color: 'var(--color--ink-subtle)',
               fontStyle: 'italic',
             }}
           >
@@ -372,7 +372,7 @@ export default function ConfigScreen({ ctx }: Props) {
           style={{
             marginTop: '2rem',
             padding: '1rem',
-            border: '1px solid var(--border-color)',
+            border: '1px solid var(--color--border)',
             borderRadius: '4px',
           }}
         >

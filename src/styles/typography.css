@@ -59,7 +59,7 @@ p {
 }
 
 .text-error {
-  color: var(--alert-color);
+  color: var(--color--ink-danger);
 }
 
 strong,
@@ -71,7 +71,8 @@ pre,
 .code {
   font-family: var(--monospaced-font-family);
   font-size: var(--font-size-s);
-  background-color: var(--light-bg-color);
+  color: var(--color--code--ink);
+  background-color: var(--color--code--surface);
   padding: var(--spacing-m);
   margin-bottom: var(--spacing-m);
 }

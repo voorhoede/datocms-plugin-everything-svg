@@ -11,7 +11,7 @@
 .textarea,
 .viewer {
   padding: 0;
-  box-shadow: 0 0 0 1px var(--border-color);
+  box-shadow: 0 0 0 1px var(--color--border);
   border-radius: var(--spacing-s);
   transition: box-shadow 0.1s ease-in-out;
   box-sizing: border-box;
@@ -26,20 +26,24 @@
 }
 
 .textarea:focus {
-  box-shadow: 0 0 0 1px var(--light-body-color);
+  box-shadow:
+    0 0 0 1px var(--color--focus--border),
+    0 0 0 4px var(--color--focus--outline);
 }
 
 .viewer {
   flex: 25%;
-  box-shadow: 0 0 0 1px var(--border-color);
+  box-shadow: 0 0 0 1px var(--color--border);
   border-radius: var(--spacing-s);
+  background-color: var(--color--surface-muted);
+  overflow: hidden;
 }
 
 .viewerSvg {
   position: relative;
   aspect-ratio: 1 / 1;
   padding: var(--spacing-l);
-  background-color: var(--lighter-bg-color);
+  background-color: inherit;
 }
 
 .viewerSvgElement {
@@ -84,6 +88,8 @@
 .viewerFilename {
   height: 30px;
   width: 100%;
+  background-color: var(--color--surface);
+  border-top: 1px solid var(--color--border);
 }
 
 .filenameInput {
@@ -91,5 +97,6 @@
   height: 100%;
   background: transparent;
   border: none;
+  color: var(--color--ink);
   text-align: center;
 }
